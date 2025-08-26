@@ -407,6 +407,11 @@ ${TemplateEngine.render(readmeTemplate, variables).substring(0, 300)}...`
       e.preventDefault()
       this.openOnboarding()
     })
+
+    // Debug storage (temporary)
+    document.getElementById('debug-storage')?.addEventListener('click', () => {
+      this.debugStorage()
+    })
   }
 
   private setupTabNavigation(): void {
@@ -616,6 +621,43 @@ ${TemplateEngine.render(readmeTemplate, variables).substring(0, 300)}...`
     }
   }
 
+  private async debugStorage(): Promise<void> {
+    try {
+      console.log('🔍 Debugging storage...')
+
+      // Check regular storage
+      const allStorage = await this.browser.storage.local.get()
+      console.log('📦 All local storage keys:', Object.keys(allStorage))
+
+      // Check session storage if available
+      if (this.browser.storage.session) {
+        const sessionStorage = await this.browser.storage.session.get()
+        console.log('📦 Session storage keys:', Object.keys(sessionStorage))
+      } else {
+        console.log('📦 Session storage not available')
+      }
+
+      // Check secure storage
+      const tokenManager = (await import('../lib/security/token-manager')).tokenManager
+      const isAuthenticated = await tokenManager.isAuthenticated()
+      console.log('🔐 Is authenticated:', isAuthenticated)
+
+      const token = await tokenManager.getGitHubToken()
+      console.log('🔐 Token available:', !!token)
+
+      const metadata = await tokenManager.getTokenMetadata()
+      console.log('🔐 Token metadata:', metadata)
+
+      this.showToast('Storage debug info logged to console', 'info')
+    } catch (error) {
+      console.error('Debug storage failed:', error)
+      this.showToast(
+        'Debug failed: ' + (error instanceof Error ? error.message : 'Unknown error'),
+        'error'
+      )
+    }
+  }
+
   // ---------- PAT flow ----------
 
   private async handleSaveValidatePAT(): Promise<void> {
@@ -689,7 +731,7 @@ ${TemplateEngine.render(readmeTemplate, variables).substring(0, 300)}...`
 This is a test commit from LeetShip extension.
 
 - **Timestamp**: ${new Date().toISOString()}
-- **Extension**: LeetShip v1.0.0
+- **Extension**: LeetShip v1.0.2
 - **Purpose**: Testing GitHub API integration
 
 If you see this file, the GitHub integration is working correctly! 🎉

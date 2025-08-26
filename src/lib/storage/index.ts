@@ -93,7 +93,7 @@ export class StorageManager {
         configToStore.github = {
           ...configToStore.github,
           accessToken: '',
-          refreshToken: ''
+          refreshToken: '',
         }
       }
 
@@ -110,29 +110,49 @@ export class StorageManager {
     const config = await this.getConfig()
 
     // Get GitHub config from secure token manager
-    const githubConfig = await tokenManager.getGitHubConfig()
-    if (githubConfig) {
-      config.github = githubConfig
-    } else if (config.github) {
-      // Fallback: try legacy decryption for migration
-      try {
-        if (config.github.accessToken) {
-          config.github.accessToken = decrypt(config.github.accessToken)
+    try {
+      const githubConfig = await tokenManager.getGitHubConfig()
+      if (githubConfig) {
+        config.github = githubConfig
+        console.log('✅ Retrieved GitHub config from secure storage')
+      } else if (config.github) {
+        // Fallback: try legacy decryption for migration
+        try {
+          if (config.github.accessToken) {
+            config.github.accessToken = decrypt(config.github.accessToken)
+          }
+          if (config.github.refreshToken) {
+            config.github.refreshToken = decrypt(config.github.refreshToken)
+          }
+
+          // Migrate to new secure storage
+          if (config.github.accessToken) {
+            await tokenManager.storeGitHubToken(config.github)
+            console.log('✅ Migrated tokens to secure storage')
+          }
+        } catch (error) {
+          console.error('Failed to decrypt tokens (legacy):', error)
+          // Clear corrupted data
+          config.github.accessToken = ''
+          config.github.refreshToken = ''
         }
-        if (config.github.refreshToken) {
-          config.github.refreshToken = decrypt(config.github.refreshToken)
+      }
+    } catch (error) {
+      console.error('❌ Failed to retrieve GitHub config from secure storage:', error)
+      // If secure storage fails, try legacy decryption as fallback
+      if (config.github) {
+        try {
+          if (config.github.accessToken) {
+            config.github.accessToken = decrypt(config.github.accessToken)
+          }
+          if (config.github.refreshToken) {
+            config.github.refreshToken = decrypt(config.github.refreshToken)
+          }
+        } catch (decryptError) {
+          console.error('Failed to decrypt tokens (fallback):', decryptError)
+          config.github.accessToken = ''
+          config.github.refreshToken = ''
         }
-        
-        // Migrate to new secure storage
-        if (config.github.accessToken) {
-          await tokenManager.storeGitHubToken(config.github)
-          console.log('✅ Migrated tokens to secure storage')
-        }
-      } catch (error) {
-        console.error('Failed to decrypt tokens (legacy):', error)
-        // Clear corrupted data
-        config.github.accessToken = ''
-        config.github.refreshToken = ''
       }
     }
 
@@ -172,7 +192,7 @@ export class StorageManager {
     try {
       // Use secure token manager to clear tokens
       await tokenManager.forceTokenRefresh()
-      
+
       // Also clear local config tokens (legacy cleanup)
       const config = await this.getConfig()
       if (config.github) {
@@ -299,10 +319,10 @@ export class StorageManager {
     try {
       // Clear secure token storage
       await tokenManager.clearAllTokens()
-      
+
       // Clear regular storage
       await this.browser.storage.local.clear()
-      
+
       // Clear session storage if available
       if (this.browser.storage.session) {
         await this.browser.storage.session.clear()

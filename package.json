@@ -1,6 +1,7 @@
 {
   "name": "leetship",
-  "version": "1.0.0",
+  "author": "yousefdergham",
+  "version": "1.0.2",
   "description": "Cross-browser extension that automatically commits accepted LeetCode submissions to GitHub",
   "private": true,
   "type": "module",
@@ -10,11 +11,13 @@
     "build:chrome": "node scripts/build.js --chrome-only --package",
     "build:firefox": "node scripts/build.js --firefox-only --package",
     "build:all": "node scripts/build.js --package",
+    "sign:firefox": "node scripts/sign-firefox.js",
+    "sign:firefox:listed": "node scripts/sign-firefox.js --listed",
     "lint": "eslint src --ext .ts,.tsx",
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
     "format": "prettier --write src/**/*.{ts,tsx,css}",
     "type-check": "tsc --noEmit",
-    "clean": "rm -rf dist dist-* leetship-*.zip leetship-*.xpi"
+    "clean": "rm -rf dist dist-* leetship-*.zip leetship-*.xpi web-ext-artifacts"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.268",

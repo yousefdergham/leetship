@@ -169,7 +169,7 @@ export class GitHubClient {
 This is a test commit from LeetShip extension.
 
 - **Timestamp**: ${new Date().toISOString()}
-- **Extension**: LeetShip v1.0.0
+- **Extension**: LeetShip v1.0.2
 - **Purpose**: Testing GitHub API integration
 
 If you see this file, the GitHub integration is working correctly! 🎉

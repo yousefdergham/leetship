@@ -7,7 +7,7 @@ import { getBrowser } from '../browser'
 export class SecureStorage {
   private browser = getBrowser()
   private keyCache = new Map<string, CryptoKey>()
-  
+
   /**
    * Generate a strong encryption key using Web Crypto API
    */
@@ -27,7 +27,7 @@ export class SecureStorage {
         name: 'PBKDF2',
         salt: new TextEncoder().encode(salt),
         iterations: 100000,
-        hash: 'SHA-256'
+        hash: 'SHA-256',
       },
       keyMaterial,
       { name: 'AES-GCM', length: 256 },
@@ -58,11 +58,7 @@ export class SecureStorage {
       const iv = crypto.getRandomValues(new Uint8Array(12))
       const encodedData = new TextEncoder().encode(data)
 
-      const encrypted = await crypto.subtle.encrypt(
-        { name: 'AES-GCM', iv },
-        key,
-        encodedData
-      )
+      const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, encodedData)
 
       // Combine IV and encrypted data
       const combined = new Uint8Array(iv.length + encrypted.byteLength)
@@ -83,19 +79,15 @@ export class SecureStorage {
   async decryptData(encryptedData: string, context: string = 'default'): Promise<string> {
     try {
       const key = await this.getEncryptionKey(context)
-      
+
       // Decode base64
       const combined = Uint8Array.from(atob(encryptedData), c => c.charCodeAt(0))
-      
+
       // Extract IV and encrypted data
       const iv = combined.slice(0, 12)
       const encrypted = combined.slice(12)
 
-      const decrypted = await crypto.subtle.decrypt(
-        { name: 'AES-GCM', iv },
-        key,
-        encrypted
-      )
+      const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, encrypted)
 
       return new TextDecoder().decode(decrypted)
     } catch (error) {
@@ -125,7 +117,7 @@ export class SecureStorage {
     try {
       const result = await this.browser.storage.local.get(key)
       const encrypted = result[key]
-      
+
       if (!encrypted) {
         return null
       }
@@ -143,15 +135,16 @@ export class SecureStorage {
   async setSessionData(key: string, data: string): Promise<void> {
     try {
       // Use chrome.storage.session if available (Chrome MV3)
-      if (this.browser.storage.session) {
+      if (this.browser.storage.session && typeof this.browser.storage.session.set === 'function') {
         await this.browser.storage.session.set({ [key]: data })
       } else {
-        // Fallback to memory storage for Firefox
+        // Fallback to persistent storage for better reliability
         await this.setSecureData(`session:${key}`, data)
       }
     } catch (error) {
       console.error('Session storage failed:', error)
-      throw new Error('Failed to store session data')
+      // Fallback to persistent storage if session storage fails
+      await this.setSecureData(`session:${key}`, data)
     }
   }
 
@@ -160,7 +153,7 @@ export class SecureStorage {
    */
   async getSessionData(key: string): Promise<string | null> {
     try {
-      if (this.browser.storage.session) {
+      if (this.browser.storage.session && typeof this.browser.storage.session.get === 'function') {
         const result = await this.browser.storage.session.get(key)
         return result[key] || null
       } else {
@@ -168,7 +161,8 @@ export class SecureStorage {
       }
     } catch (error) {
       console.error('Session retrieval failed:', error)
-      return null
+      // Fallback to persistent storage if session storage fails
+      return await this.getSecureData(`session:${key}`)
     }
   }
 
@@ -177,7 +171,10 @@ export class SecureStorage {
    */
   async clearSessionData(key?: string): Promise<void> {
     try {
-      if (this.browser.storage.session) {
+      if (
+        this.browser.storage.session &&
+        typeof this.browser.storage.session.remove === 'function'
+      ) {
         if (key) {
           await this.browser.storage.session.remove(key)
         } else {
