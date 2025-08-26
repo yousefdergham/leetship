@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LeetShip - Options</title>
+  <link rel="stylesheet" href="styles/options.css">
+</head>
+
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">
+          <img src="icons/icon-48.png" alt="LeetShip" class="logo-icon">
+          <h1>LeetShip</h1>
+        </div>
+        <div class="version">v1.0.0</div>
+      </div>
+    </header>
+
+    <nav class="nav">
+      <button class="nav-item active" data-tab="account">Account</button>
+      <button class="nav-item" data-tab="repository">Repository</button>
+      <button class="nav-item" data-tab="templates">Templates</button>
+      <button class="nav-item" data-tab="settings">Settings</button>
+      <button class="nav-item" data-tab="queue">Queue</button>
+    </nav>
+
+    <main class="main">
+      <!-- Account Tab -->
+      <div class="tab-content active" data-tab="account">
+        <div class="section">
+          <h2>GitHub Account</h2>
+          <p class="description">Connect your GitHub account to automatically commit your accepted LeetCode solutions.
+          </p>
+
+          <div class="auth-status" id="auth-status">
+            <div class="status-indicator" id="status-indicator"></div>
+            <div class="status-text" id="status-text">Checking connection...</div>
+          </div>
+
+          <div class="auth-actions">
+            <button class="btn btn-primary" id="connect-github">Connect GitHub</button>
+            <button class="btn btn-secondary hidden" id="disconnect-github">Disconnect</button>
+            <button class="btn btn-secondary" id="test-connection">Test Connection</button>
+            <button class="btn btn-warning" id="regenerate-token">Regenerate Token</button>
+            <button class="btn btn-danger" id="clear-token">Clear Token</button>
+          </div>
+
+          <!-- PAT Authentication Form -->
+          <div class="pat-form" id="pat-form">
+            <h3>Personal Access Token Setup</h3>
+            <p class="description">Enter your GitHub Personal Access Token and repository details.</p>
+
+            <div class="form-group">
+              <label for="pat-token">Personal Access Token</label>
+              <input type="password" id="pat-token" class="form-control" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+              <small class="help-text">Your GitHub Personal Access Token (classic or fine-grained)</small>
+            </div>
+
+            <div class="form-group">
+              <label for="pat-owner">Repository Owner</label>
+              <input type="text" id="pat-owner" class="form-control" placeholder="your-username">
+              <small class="help-text">Your GitHub username or organization name</small>
+            </div>
+
+            <div class="form-group">
+              <label for="pat-repository">Repository Name</label>
+              <input type="text" id="pat-repository" class="form-control" placeholder="my-leetcode-solutions">
+              <small class="help-text">The repository where solutions will be committed</small>
+            </div>
+
+            <div class="form-group">
+              <label for="pat-branch">Branch</label>
+              <input type="text" id="pat-branch" class="form-control" value="main" placeholder="main">
+              <small class="help-text">The branch to commit to (default: main)</small>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn btn-primary" id="save-validate-pat">Save & Validate</button>
+              <button class="btn btn-secondary" id="test-commit">Test Commit</button>
+            </div>
+          </div>
+
+          <div class="user-info hidden" id="user-info">
+            <div class="user-avatar">
+              <img id="user-avatar" src="" alt="User Avatar">
+            </div>
+            <div class="user-details">
+              <div class="user-name" id="user-name"></div>
+              <div class="user-username" id="user-username"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Repository Tab -->
+      <div class="tab-content" data-tab="repository">
+        <div class="section">
+          <h2>Repository Settings</h2>
+          <p class="description">Configure where your solutions will be committed.</p>
+
+          <div class="form-group">
+            <label for="repository-select">Repository</label>
+            <select id="repository-select" class="form-control">
+              <option value="">Loading repositories...</option>
+            </select>
+            <small class="help-text">Select an existing repository or create a new one</small>
+          </div>
+
+          <div class="form-group">
+            <label for="new-repository">Or create new repository</label>
+            <div class="input-group">
+              <input type="text" id="new-repository" class="form-control" placeholder="my-leetcode-solutions">
+              <button class="btn btn-secondary" id="create-repository">Create</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="branch-select">Branch</label>
+            <select id="branch-select" class="form-control">
+              <option value="main">main</option>
+            </select>
+          </div>
+
+          <div class="repository-preview" id="repository-preview">
+            <h3>Repository Structure Preview</h3>
+            <div class="file-tree">
+              <div class="folder">📁 easy</div>
+              <div class="folder-content">
+                <div class="folder">📁 0001-two-sum</div>
+                <div class="folder-content">
+                  <div class="file">📄 solution.py</div>
+                  <div class="file">📄 README.md</div>
+                </div>
+              </div>
+              <div class="folder">📁 medium</div>
+              <div class="folder">📁 hard</div>
+              <div class="file">📄 README.md</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Templates Tab -->
+      <div class="tab-content" data-tab="templates">
+        <div class="section">
+          <h2>Commit & README Templates</h2>
+          <p class="description">Customize how your commits and README files are generated.</p>
+
+          <div class="form-group">
+            <label for="commit-template">Commit Message Template</label>
+            <textarea id="commit-template" class="form-control code-textarea" rows="3"></textarea>
+            <small class="help-text">Available variables: {{id}}, {{title}}, {{difficulty}}, {{lang}}, {{runtime}},
+              {{memory}}</small>
+          </div>
+
+          <div class="form-group">
+            <label for="readme-template">README Template</label>
+            <textarea id="readme-template" class="form-control code-textarea" rows="10"></textarea>
+            <small class="help-text">Markdown template for individual problem READMEs</small>
+          </div>
+
+          <div class="form-group">
+            <label for="folder-template">Folder Layout Template</label>
+            <input type="text" id="folder-template" class="form-control" placeholder="{{difficulty}}/{{id}}-{{slug}}">
+            <small class="help-text">Directory structure for organizing solutions</small>
+          </div>
+
+          <div class="template-preview">
+            <h3>Preview</h3>
+            <div class="preview-content" id="template-preview"></div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn btn-secondary" id="reset-templates">Reset to Default</button>
+            <button class="btn btn-primary" id="save-templates">Save Templates</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Tab -->
+      <div class="tab-content" data-tab="settings">
+        <div class="section">
+          <h2>Extension Settings</h2>
+          <p class="description">Configure extension behavior and preferences.</p>
+
+          <div class="settings-grid">
+            <div class="setting-item">
+              <div class="setting-main">
+                <label for="include-problem-statement" class="setting-label">Include Problem Statement</label>
+                <p class="setting-description">Include full problem description in README (may violate ToS)</p>
+              </div>
+              <div class="setting-control">
+                <label class="toggle">
+                  <input type="checkbox" id="include-problem-statement">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-main">
+                <label for="sanitize-filenames" class="setting-label">Sanitize Filenames</label>
+                <p class="setting-description">Remove special characters from file and folder names</p>
+              </div>
+              <div class="setting-control">
+                <label class="toggle">
+                  <input type="checkbox" id="sanitize-filenames" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-main">
+                <label for="skip-duplicates" class="setting-label">Skip Duplicate Commits</label>
+                <p class="setting-description">Avoid committing identical solutions multiple times</p>
+              </div>
+              <div class="setting-control">
+                <label class="toggle">
+                  <input type="checkbox" id="skip-duplicates" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-main">
+                <label for="auto-retry" class="setting-label">Auto Retry Failed Commits</label>
+                <p class="setting-description">Automatically retry failed commits when online</p>
+              </div>
+              <div class="setting-control">
+                <label class="toggle">
+                  <input type="checkbox" id="auto-retry" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-main">
+                <label for="private-repo-warning" class="setting-label">Private Repository Warning</label>
+                <p class="setting-description">Show warning when committing premium problems to public repos</p>
+              </div>
+              <div class="setting-control">
+                <label class="toggle">
+                  <input type="checkbox" id="private-repo-warning" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-main">
+                <label for="telemetry" class="setting-label">Anonymous Telemetry</label>
+                <p class="setting-description">Help improve LeetShip by sending anonymous usage data</p>
+              </div>
+              <div class="setting-control">
+                <label class="toggle">
+                  <input type="checkbox" id="telemetry">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Queue Tab -->
+      <div class="tab-content" data-tab="queue">
+        <div class="section">
+          <h2>Commit Queue</h2>
+          <p class="description">View and manage pending commits.</p>
+
+          <div class="queue-actions">
+            <button class="btn btn-primary" id="process-queue">Process Queue</button>
+            <button class="btn btn-secondary" id="clear-queue">Clear Queue</button>
+          </div>
+
+          <div class="queue-list" id="queue-list">
+            <div class="loading">Loading queue...</div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-links">
+          <a href="#" id="open-onboarding">Setup Guide</a>
+          <a href="https://github.com/LeetShip/extension" target="_blank">GitHub</a>
+          <a href="https://github.com/LeetShip/extension/issues" target="_blank">Report Issue</a>
+        </div>
+        <div class="footer-text">
+          Generated with LeetShip - Automatically sync your LeetCode progress
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Toast notifications -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script type="module" src="options.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,40 @@
+{
+  "name": "leetship",
+  "version": "1.0.0",
+  "description": "Cross-browser extension that automatically commits accepted LeetCode submissions to GitHub",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev.js",
+    "build": "tsc && vite build",
+    "build:chrome": "node scripts/build.js --chrome-only --package",
+    "build:firefox": "node scripts/build.js --firefox-only --package",
+    "build:all": "node scripts/build.js --package",
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix",
+    "format": "prettier --write src/**/*.{ts,tsx,css}",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist dist-* leetship-*.zip leetship-*.xpi"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.268",
+    "@types/crypto-js": "^4.2.2",
+    "@types/node": "^20.0.0",
+    "@types/webextension-polyfill": "^0.10.7",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "@vitest/ui": "^3.2.4",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "jsdom": "^26.1.0",
+    "prettier": "^3.2.0",
+    "typescript": "^5.3.0",
+    "vite": "^5.0.0",
+    "vitest": "^3.2.4",
+    "webextension-polyfill": "^0.10.0"
+  },
+  "dependencies": {
+    "crypto-js": "^4.2.0",
+    "terser": "^5.43.1"
+  }
+}

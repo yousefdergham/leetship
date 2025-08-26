@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to LeetShip</title>
+  <link rel="stylesheet" href="styles/onboarding.css">
+</head>
+
+<body>
+  <div class="container">
+    <div class="content">
+      <header class="header">
+        <div class="logo">
+          <img src="icons/icon-48.png" alt="LeetShip" class="logo-icon">
+          <h1>LeetShip</h1>
+        </div>
+        <p class="tagline">Automatically commit your accepted LeetCode submissions to GitHub</p>
+      </header>
+
+      <!-- Progress Bar -->
+      <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+        <div class="step-indicator" id="step-indicator">Step 1 of 4</div>
+      </div>
+
+      <!-- Step 1: Welcome -->
+      <div class="onboarding-step" id="step-1">
+        <div class="step-content">
+          <div class="step-icon">🚀</div>
+          <h2>Welcome to LeetShip!</h2>
+          <p class="step-description">
+            LeetShip automatically commits your accepted LeetCode solutions to GitHub with clean structure,
+            generated READMEs, and organized folders by difficulty.
+          </p>
+
+          <div class="features-grid">
+            <div class="feature">
+              <div class="feature-icon">✅</div>
+              <div class="feature-content">
+                <h3>Automatic Detection</h3>
+                <p>Detects accepted submissions in real-time</p>
+              </div>
+            </div>
+            <div class="feature">
+              <div class="feature-icon">📁</div>
+              <div class="feature-content">
+                <h3>Clean Organization</h3>
+                <p>Structured folders by difficulty and problem ID</p>
+              </div>
+            </div>
+            <div class="feature">
+              <div class="feature-icon">📋</div>
+              <div class="feature-content">
+                <h3>Generated READMEs</h3>
+                <p>Automatic documentation with problem metadata</p>
+              </div>
+            </div>
+            <div class="feature">
+              <div class="feature-icon">🔒</div>
+              <div class="feature-content">
+                <h3>Secure & Private</h3>
+                <p>Your code and credentials stay secure</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-actions">
+            <button class="btn btn-primary" id="next-step">Get Started</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: GitHub Token Setup -->
+      <div class="onboarding-step hidden" id="step-2">
+        <div class="step-content">
+          <div class="step-icon">🔑</div>
+          <h2>Connect Your GitHub Account</h2>
+          <p class="step-description">
+            We'll use a GitHub Personal Access Token to securely connect your account.
+            This is the safest and most reliable method.
+          </p>
+
+          <div class="token-setup">
+            <div class="setup-card">
+              <h3>Step 1: Generate a GitHub Token</h3>
+              <div class="setup-steps">
+                <div class="setup-step">
+                  <span class="step-number">1</span>
+                  <span>Go to <a href="https://github.com/settings/tokens" target="_blank" class="link">GitHub Settings
+                      → Tokens</a></span>
+                </div>
+                <div class="setup-step">
+                  <span class="step-number">2</span>
+                  <span>Choose either:</span>
+                </div>
+                <div class="setup-step">
+                  <span class="step-number">3a</span>
+                  <span><strong>Classic Token:</strong> Click "Generate new token (classic)" → Select "repo"
+                    scope</span>
+                </div>
+                <div class="setup-step">
+                  <span class="step-number">3b</span>
+                  <span><strong>Fine-grained Token:</strong> Click "Generate new token" → Set permissions to "Contents:
+                    Read and write"</span>
+                </div>
+                <div class="setup-step">
+                  <span class="step-number">4</span>
+                  <span>Set <strong>Note</strong> to "LeetShip Extension"</span>
+                </div>
+                <div class="setup-step">
+                  <span class="step-number">5</span>
+                  <span>Click "Generate token" and copy the token</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="token-input-section">
+              <h3>Step 2: Enter Your Token</h3>
+              <div class="form-group">
+                <label for="token-input">GitHub Personal Access Token</label>
+                <input type="password" id="token-input" class="form-control"
+                  placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx or github_pat_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                  autocomplete="off">
+                <small class="help-text">Paste your GitHub Personal Access Token here</small>
+              </div>
+
+              <div class="token-actions">
+                <button class="btn btn-secondary" id="test-token" disabled>Test Token</button>
+                <button class="btn btn-primary" id="connect-github" disabled>Connect GitHub</button>
+                <button class="btn btn-warning" id="create-token">Create New Token</button>
+              </div>
+
+              <div class="token-status" id="token-status"></div>
+              <div class="connection-status" id="connection-status"></div>
+            </div>
+          </div>
+
+          <div class="step-actions">
+            <button class="btn btn-secondary" id="prev-step">Back</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Repository Setup -->
+      <div class="onboarding-step hidden" id="step-3">
+        <div class="step-content">
+          <div class="step-icon">📦</div>
+          <h2>Choose Your Repository</h2>
+          <p class="step-description">
+            Select where your LeetCode solutions will be stored. You can use an existing repository
+            or we'll help you create a new one.
+          </p>
+
+          <div class="repository-options">
+            <div class="option-card">
+              <input type="radio" id="use-existing" name="repo-option" value="existing" checked>
+              <label for="use-existing" class="option-label">
+                <div class="option-icon">📁</div>
+                <div class="option-content">
+                  <h3>Use Existing Repository</h3>
+                  <p>Select from your existing repositories</p>
+                </div>
+              </label>
+            </div>
+            <div class="option-card">
+              <input type="radio" id="create-new" name="repo-option" value="new">
+              <label for="create-new" class="option-label">
+                <div class="option-icon">✨</div>
+                <div class="option-content">
+                  <h3>Create New Repository</h3>
+                  <p>We'll create a new repository for your solutions</p>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="repository-form">
+            <div class="existing-repo" id="existing-repo-section">
+              <div class="form-group">
+                <label for="repository-select-onboarding">Select Repository</label>
+                <select id="repository-select-onboarding" class="form-control">
+                  <option value="">Loading repositories...</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="new-repo hidden" id="new-repo-section">
+              <div class="form-group">
+                <label for="new-repo-name">Repository Name</label>
+                <input type="text" id="new-repo-name" class="form-control" placeholder="leetcode-solutions">
+                <small class="help-text">Choose a descriptive name for your solutions repository</small>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="branch-select-onboarding">Default Branch</label>
+              <select id="branch-select-onboarding" class="form-control">
+                <option value="main">main</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="step-actions">
+            <button class="btn btn-secondary" id="prev-step">Back</button>
+            <button class="btn btn-primary" id="setup-repository">Continue</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4: Complete -->
+      <div class="onboarding-step hidden" id="step-4">
+        <div class="step-content">
+          <div class="step-icon">🎉</div>
+          <h2>You're All Set!</h2>
+          <p class="step-description">
+            LeetShip is now configured and ready to automatically commit your accepted LeetCode solutions.
+          </p>
+
+          <div class="completion-info">
+            <div class="info-card success">
+              <h3>What happens next:</h3>
+              <ul>
+                <li>✅ Visit LeetCode and solve problems as usual</li>
+                <li>✅ LeetShip will detect accepted submissions automatically</li>
+                <li>✅ Your solutions will be committed to GitHub with clean structure</li>
+                <li>✅ Check your repository to see your growing collection!</li>
+              </ul>
+            </div>
+
+            <div class="quick-actions">
+              <div class="action-card">
+                <div class="action-icon">🔧</div>
+                <div class="action-content">
+                  <h4>Manage Settings</h4>
+                  <p>Customize templates, change repositories, or adjust preferences</p>
+                  <button class="btn btn-secondary btn-sm" id="open-options">Open Options</button>
+                </div>
+              </div>
+              <div class="action-card">
+                <div class="action-icon">🧪</div>
+                <div class="action-content">
+                  <h4>Test Integration</h4>
+                  <p>Solve a LeetCode problem to test the automatic commit feature</p>
+                  <button class="btn btn-secondary btn-sm" id="goto-leetcode-btn">Go to LeetCode</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-actions">
+            <button class="btn btn-primary" id="complete-onboarding-btn">Get Started</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast notifications -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script type="module" src="onboarding.js"></script>
+</body>
+
+</html>
